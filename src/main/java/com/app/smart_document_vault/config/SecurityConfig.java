@@ -41,6 +41,7 @@ public class SecurityConfig {
         return http
         		.cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**",
                         		"/api/documents/share/**",
