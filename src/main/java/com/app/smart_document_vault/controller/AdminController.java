@@ -66,7 +66,7 @@ public class AdminController {
         return ResponseEntity.ok(documentService.getDocumentsByUserId(userId));
     }
 
-    @Operation(summary = "Deative the User",description = "Deactivate the user by his/her id.")
+    @Operation(summary = "Deactivate the User",description = "Deactivate the user by his/her id.")
     @ApiResponses(value = {
     		@ApiResponse(responseCode = "200",description = "Deactivated successfully"),
     		@ApiResponse(responseCode = "404",description = "User not found")
