@@ -2,6 +2,8 @@ package com.app.smart_document_vault.security;
 
 import com.app.smart_document_vault.entity.User;
 import com.app.smart_document_vault.util.JwtService;
+
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -39,7 +42,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token=authHeader.substring(7);
-        String username = jwtService.extractUsername(token);
+        String username="";
+        try {
+        	username = jwtService.extractUsername(token);
+        }catch(SignatureException exception) {
+        	 response.setContentType("application/json");
+        	 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        	 String json = String.format("""
+        	        {
+        	            "message": "Invalid JWT Token",
+        	            "status": "UNAUTHORIZED",
+        	            "code": 401,
+        	            "time": "%s"
+        	        }
+        	        """, LocalDateTime.now());
+        	 response.getWriter().write(json);
+        	 return;
+        }
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
 
         if(username!=null && authentication==null){
